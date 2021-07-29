@@ -6,3 +6,4 @@ docutils
 django-mdeditor
 markdown
 Pygments
+requests
