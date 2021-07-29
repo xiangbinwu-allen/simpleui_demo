@@ -11,4 +11,4 @@ echo 'Project initialization is complete!'
 
 echo 'Start the demo：'
 
-python3 manage.py runserver 8000
+python3 manage.py runserver 8050

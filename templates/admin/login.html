@@ -17,11 +17,8 @@
         type="success"
         :show-icon="false">
         <div slot="title">
-            <div>欢迎使用simpleui demo</div>
-        <div>账号：simpleui，密码：demo123456</div>
-        <div>源码地址：
-             <el-link type="primary" @click="window.open('https://github.com/newpanjing/simpleui_demo')">https://github.com/newpanjing/simpleui_demo</el-link>
-        </div>
+            <div>欢迎使用IEasy Tool</div>
+        <div>普通用户账号：testdemo，密码：ruijie123</div>
         </div>
       </el-alert>
 {% endblock %}
@@ -33,8 +30,8 @@
     <script type="text/javascript">
         window.addEventListener('load', function () {
             if(loginApp){
-                loginApp.username = 'simpleui';
-                loginApp.password = 'demo123456';
+                loginApp.username = 'testdemo';
+                loginApp.password = 'ruijie123';
             }
         });
     </script>

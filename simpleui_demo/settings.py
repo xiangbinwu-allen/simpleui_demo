@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'finance',
     'django.contrib.admindocs',
     'mdeditor',
-    'rate'
+    'rate',
+    'intltranslate',
+    # 'import_export'
 ]
 
 MIDDLEWARE = [
@@ -136,15 +138,15 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # 首页配置
 # SIMPLEUI_HOME_PAGE = 'https://www.baidu.com'
 # 首页标题
-# SIMPLEUI_HOME_TITLE = '百度一下你就知道'
+SIMPLEUI_HOME_TITLE = 'IEasy Tool'
 # 首页图标,支持element-ui的图标和fontawesome的图标
 # SIMPLEUI_HOME_ICON = 'el-icon-date'
 
 # 设置simpleui 点击首页图标跳转的地址
-SIMPLEUI_INDEX = 'https://www.88cto.com'
+SIMPLEUI_INDEX = 'http://localhost:8000'
 
 # 首页显示服务器、python、django、simpleui相关信息
-# SIMPLEUI_HOME_INFO = False
+SIMPLEUI_HOME_INFO = False
 
 # 首页显示快速操作
 # SIMPLEUI_HOME_QUICK = False
@@ -153,7 +155,7 @@ SIMPLEUI_INDEX = 'https://www.88cto.com'
 # SIMPLEUI_HOME_ACTION = False
 
 # 自定义SIMPLEUI的Logo
-# SIMPLEUI_LOGO = 'https://avatars2.githubusercontent.com/u/13655483?s=60&v=4'
+# SIMPLEUI_LOGO = 'https://cloudtest-as.ruijienetworks.com/sso/assets/ssologin/images/login_logo_public.png'
 
 # 登录页粒子动画，默认开启，False关闭
 # SIMPLEUI_LOGIN_PARTICLES = False
@@ -165,73 +167,78 @@ SIMPLEUI_ANALYSIS = True
 SIMPLEUI_CONFIG = {
     # 在自定义菜单的基础上保留系统模块
     'system_keep': True,
-    'menus': [{
-        'name': 'Simpleui',
-        'icon': 'fas fa-code',
-        'url': 'https://gitee.com/tompeppa/simpleui'
-    }, {
-        # 自2021.02.01+ 支持多级菜单，models 为子菜单名，理论上可以无限级
-        'name': '多级菜单测试',
-        'icon': 'fa fa-file',
-        'models': [{
-            'name': 'Baidu',
-            'icon': 'far fa-surprise',
-            'models': [
-                {
-                    'name': '爱奇艺',
-                    'models': [
-                        {'name': '视频直播'},
-
-                        {'name': 'TV直播',
-                         'models': [
-                             {'name': '视频直播'}
-                         ]},
-
-                    ]
-                }, {
-                    'name': '百度问答'
-                }
-            ]
-        }, {
-            'name': 'Google',
-            'icon': 'far fa-surprise',
-            'models': [{
-                'name': 'Youtube',
-                'icon': 'far fa-surprise'
-            }, {
-                'name': 'Gmail',
-                'icon': 'far fa-surprise'
-            }, {
-                'name': 'Search',
-                'url': 'https://www.google.com'
-            }]
-        }]
-    }, {
-        'app': 'auth',
-        'name': '权限认证',
-        'icon': 'fas fa-user-shield',
-        'models': [{
-            'name': '用户',
-            'icon': 'fa fa-user',
-            'url': 'auth/user/'
-        }]
-    }, {
-        'name': '测试',
-        'icon': 'fa fa-file',
-        'models': [{
-            'name': 'Baidu',
-            'url': 'http://baidu.com',
-            'icon': 'far fa-surprise'
-        }, {
-            'name': '内网穿透',
-            'url': 'https://www.wezoz.com',
-            'icon': 'fab fa-github'
-        }, {
-            'name': '内网穿透',
-            'url': 'https://www.wezoz.com',
-            'icon': 'fab fa-github'
-        }]
-    }]
+    'menus': [
+    #     {
+    #     'name': 'Simpleui',
+    #     'icon': 'fas fa-code',
+    #     'url': 'https://gitee.com/tompeppa/simpleui'
+    # },
+    #     {
+    #     # 自2021.02.01+ 支持多级菜单，models 为子菜单名，理论上可以无限级
+    #     'name': '多级菜单测试',
+    #     'icon': 'fa fa-file',
+    #     'models': [{
+    #         'name': 'Baidu',
+    #         'icon': 'far fa-surprise',
+    #         'models': [
+    #             {
+    #                 'name': '爱奇艺',
+    #                 'models': [
+    #                     {'name': '视频直播'},
+    #
+    #                     {'name': 'TV直播',
+    #                      'models': [
+    #                          {'name': '视频直播'}
+    #                      ]},
+    #
+    #                 ]
+    #             }, {
+    #                 'name': '百度问答'
+    #             }
+    #         ]
+    #     }, {
+    #         'name': 'Google',
+    #         'icon': 'far fa-surprise',
+    #         'models': [{
+    #             'name': 'Youtube',
+    #             'icon': 'far fa-surprise'
+    #         }, {
+    #             'name': 'Gmail',
+    #             'icon': 'far fa-surprise'
+    #         }, {
+    #             'name': 'Search',
+    #             'url': 'https://www.google.com'
+    #         }]
+    #     }]
+    # },
+    #     {
+    #     'app': 'auth',
+    #     'name': '权限认证',
+    #     'icon': 'fas fa-user-shield',
+    #     'models': [{
+    #         'name': '用户',
+    #         'icon': 'fa fa-user',
+    #         'url': 'auth/user/'
+    #     }]
+    # }
+    #     , {
+    #     'name': '测试',
+    #     'icon': 'fa fa-file',
+    #     'models': [{
+    #         'name': 'Baidu',
+    #         'url': 'http://baidu.com',
+    #         'icon': 'far fa-surprise'
+    #     }, {
+    #         'name': '内网穿透',
+    #         'url': 'https://www.wezoz.com',
+    #         'icon': 'fab fa-github'
+    #     }, {
+    #         'name': '内网穿透',
+    #         'url': 'https://www.wezoz.com',
+    #         'icon': 'fab fa-github'
+    #     }]
+    # }
+    ]
 }
 
 # 是否显示默认图标，默认=True
@@ -258,3 +265,5 @@ SIMPLEUI_DEFAULT_THEME = 'x-blue.css'
 
 # django 3.2要配置
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#管理员账号: admin / ruijie123
