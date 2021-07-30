@@ -1,12 +1,17 @@
+import os
+
 from django.http import JsonResponse
 from django.contrib import admin, messages
+from import_export.admin import ImportExportActionModelAdmin
+from simpleui.admin import AjaxAdmin
+
 from intltranslate.models import LanguageApp
 from intltranslate.utils import git_util
 
 
 # APP语言包管理
 @admin.register(LanguageApp)
-class LanguageAppAdmin(admin.ModelAdmin):
+class LanguageAppAdmin(ImportExportActionModelAdmin,AjaxAdmin):
     list_display = ('language', 'total_name', 'file_name', 'create_time', 'update_time')
     list_per_page = 20
 
@@ -39,14 +44,26 @@ class LanguageAppAdmin(admin.ModelAdmin):
     # 上传翻译好的文件,比对更新
     def upload_translation_file(self, request, queryset):
         # 这里的upload 就是和params中配置的key一样
-        upload = request.FILES['upload']
-        print(upload)
-        return JsonResponse(data={
-            'status': 'success',
-            'msg': '处理成功！'
-        })
+        #upload = request.FILES['upload']
+        obj = request.FILES.get('upload')
+        if obj != None:
+            f = open(os.path.join('D:\\dwy\\new\\', obj.name), 'wb')
+            print(obj == None)
+            for chunk in obj.chunks():
+                f.write(chunk)
+            f.close()
+            print(f)
+            return JsonResponse(data={
+                'status': 'success',
+                'msg': '上传成功！'
+            })
+        else:
+            return JsonResponse(data={
+                'status': 'warning',
+                'msg': '请选择要上传的文件'
+            })
 
-    upload_translation_file.short_description = '上传翻译完成文件'
+    upload_translation_file.short_description = '上传翻译完成的文件'
     upload_translation_file.type = 'success'
     upload_translation_file.icon = 'el-icon-upload'
     upload_translation_file.enable = True
