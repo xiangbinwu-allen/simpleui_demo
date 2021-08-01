@@ -40,6 +40,11 @@ class LanguageAppAdmin(ImportExportActionModelAdmin, AjaxAdmin):
     # 上传翻译好的文件,比对更新
     def upload_translation_file(self, request, queryset):
         idstr = request.POST.get('_selected')
+        if idstr == None:
+            return JsonResponse(data={
+                'status': 'failed',
+                'msg': '请选择1种需要更新的语言包!'
+            })
         ids = idstr.split(",")
         print(len(ids))
         if len(ids) != 1:
@@ -138,13 +143,13 @@ class LanguageAppAdmin(ImportExportActionModelAdmin, AjaxAdmin):
 
     # 导出完整语言包
     def download_whole_file(self, request, queryset):
-        idstr = request.POST.get('_selected')
+        idstr = request.POST.get('_selected_action')
         ids = idstr.split(",")
         print(len(ids))
         if len(ids) != 1:
             return JsonResponse(data={
                 'status': 'failed',
-                'msg': '请选择1种需要更新的语言包!'
+                'msg': '只能选择一种语言包!'
             })
 
         employe = LanguageApp.objects.get(id=int(ids[0]))
