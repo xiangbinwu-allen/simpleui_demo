@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'mdeditor',
     'rate',
     'intltranslate',
-    # 'import_export'
 ]
 
 MIDDLEWARE = [

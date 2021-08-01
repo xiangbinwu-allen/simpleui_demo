@@ -80,7 +80,7 @@ class RecordAdmin(AjaxAdmin):
 @admin.register(Record)
 # class RecordAdmin(admin.ModelAdmin):
 # class RecordAdmin(ImportExportModelAdmin):
-class RecordAdmin(ImportExportActionModelAdmin, AjaxAdmin):
+class RecordAdmin(ImportExportActionModelAdmin, ImportExportModelAdmin, AjaxAdmin):
     resource_class = ProxyResource
 
     list_display = ('id', 'name', 'type', 'money', 'create_date')

@@ -17,7 +17,8 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include,re_path
+from intltranslate import views
 
 admin.site.site_title = 'IEasy Tool'
 admin.site.site_header = 'IEasy Tool'
@@ -27,4 +28,7 @@ urlpatterns = [
                   url(r'doc/', include('django.contrib.admindocs.urls'), name='doc'),
                   path('', admin.site.urls),
                   url(r'mdeditor/', include('mdeditor.urls')),
+                  # path('', views.index),
+                  # re_path('download/(?P<id>\d+)', views.file_down,name = "download"),
+                  re_path(r'download/(?P<file_name>\.json)', views.file_down,name='download'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

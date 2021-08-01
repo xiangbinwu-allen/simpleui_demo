@@ -2,16 +2,19 @@ import os
 
 from django.http import JsonResponse
 from django.contrib import admin, messages
-from import_export.admin import ImportExportActionModelAdmin
+from import_export.admin import ImportExportActionModelAdmin, ImportExportModelAdmin
 from simpleui.admin import AjaxAdmin
+from django.shortcuts import render, HttpResponse
+from django.http import StreamingHttpResponse
 
+from intltranslate import views
 from intltranslate.models import LanguageApp
-from intltranslate.utils import git_util
+from intltranslate.utils import git_util, json_util
 
 
 # APP语言包管理
 @admin.register(LanguageApp)
-class LanguageAppAdmin(ImportExportActionModelAdmin,AjaxAdmin):
+class LanguageAppAdmin(ImportExportActionModelAdmin, AjaxAdmin):
     list_display = ('language', 'total_name', 'file_name', 'create_time', 'update_time')
     list_per_page = 20
 
@@ -25,13 +28,6 @@ class LanguageAppAdmin(ImportExportActionModelAdmin,AjaxAdmin):
         for id in ids:
             employe = LanguageApp.objects.get(id=id)
             git_util.download_file_from_git(app_url, employe.file_name, "templates\\app_file\\")
-            # Language.objects.create(
-            #     name=employe.name,
-            #     idCard=employe.idCard,
-            #     phone=employe.phone,
-            #     birthday=employe.birthday,
-            #     department_id=employe.department_id
-            # )
 
         messages.add_message(request, messages.SUCCESS, '同步成功')
 
@@ -43,25 +39,31 @@ class LanguageAppAdmin(ImportExportActionModelAdmin,AjaxAdmin):
 
     # 上传翻译好的文件,比对更新
     def upload_translation_file(self, request, queryset):
-        # 这里的upload 就是和params中配置的key一样
-        #upload = request.FILES['upload']
-        obj = request.FILES.get('upload')
-        if obj != None:
-            f = open(os.path.join('D:\\dwy\\new\\', obj.name), 'wb')
-            print(obj == None)
-            for chunk in obj.chunks():
-                f.write(chunk)
-            f.close()
-            print(f)
+        idstr = request.POST.get('_selected')
+        ids = idstr.split(",")
+        print(len(ids))
+        if len(ids) != 1:
             return JsonResponse(data={
-                'status': 'success',
-                'msg': '上传成功！'
+                'status': 'failed',
+                'msg': '请选择1种需要更新的语言包!'
             })
-        else:
+
+        employe = LanguageApp.objects.get(id=int(ids[0]))
+        if employe == None:
+            return JsonResponse(data={
+                'status': 'failed',
+                'msg': '当前语言语言包不存在!'
+            })
+
+        obj = request.FILES.get('upload')
+        if obj == None:
             return JsonResponse(data={
                 'status': 'warning',
                 'msg': '请选择要上传的文件'
             })
+
+        # 解析文件并写入本地
+        json_util._update_file_data_from_excel(employe.file_name, obj)
 
     upload_translation_file.short_description = '上传翻译完成的文件'
     upload_translation_file.type = 'success'
@@ -73,25 +75,6 @@ class LanguageAppAdmin(ImportExportActionModelAdmin,AjaxAdmin):
             'type': 'file',
             'key': 'upload',
             'label': '文件'
-        }, {
-            'type': 'select',
-            'key': 'language_type',
-            'label': '小语种',
-            'width': '100px',
-            # size对应elementui的size，取值为：medium / small / mini
-            'size': 'mini',
-            # value字段可以指定默认值
-            'value': '0',
-            'options': [{
-                'key': '0',
-                'label': '中文'
-            }, {
-                'key': '1',
-                'label': '英文'
-            }, {
-                'key': '2',
-                'label': '西班牙语'
-            }]
         }]
     }
 
@@ -153,29 +136,25 @@ class LanguageAppAdmin(ImportExportActionModelAdmin,AjaxAdmin):
     download_compare_file.icon = 'el-icon-upload'
     download_compare_file.enable = True
 
-    # 导出语言包
+    # 导出完整语言包
     def download_whole_file(self, request, queryset):
-        app_url = 'https://gitee.com/wuxiangbin/simpleui/raw/master/'
-        # 这里的upload 就是和params中配置的key一样
-        ids = request.POST.getlist('_selected_action')
+        idstr = request.POST.get('_selected')
+        ids = idstr.split(",")
+        print(len(ids))
         if len(ids) != 1:
             return JsonResponse(data={
                 'status': 'failed',
-                'msg': '请选择1种语言!'
+                'msg': '请选择1种需要更新的语言包!'
             })
-        for id in ids:
-            employe = LanguageApp.objects.get(id=id)
-            git_util.download_file_from_git(app_url, employe.file_name, "templates\\app_file\\")
-            # Language.objects.create(
-            #     name=employe.name,
-            #     idCard=employe.idCard,
-            #     phone=employe.phone,
-            #     birthday=employe.birthday,
-            #     department_id=employe.department_id
-            # )
 
-        messages.add_message(request, messages.SUCCESS, '同步成功')
-
+        employe = LanguageApp.objects.get(id=int(ids[0]))
+        if employe == None:
+            return JsonResponse(data={
+                'status': 'failed',
+                'msg': '当前语言语言包不存在!'
+            })
+        file_name = employe.file_name
+        return render(request, "download.html", {"file_name":file_name})
 
     download_whole_file.short_description = '导出完整语言包'
     download_whole_file.type = 'success'
