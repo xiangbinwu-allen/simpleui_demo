@@ -5,6 +5,8 @@ from os.path import isfile
 
 from openpyxl import load_workbook, Workbook
 
+from intltranslate.utils import json_util
+
 
 def _convert_excel_2_dict(file_path):
     dic = {}
@@ -24,24 +26,13 @@ def _convert_excel_2_dict(file_path):
     return dic
 
 def _convert_dict_2_json(json_file_name, dic_list):
-    dic_list = {"first": "0",
-              "common1.aa": "1",
-              "common1.bb": "2",
-              "common2.cc": "3",
-              "common2.dd": "4",
-              "common2.ee.ff": "5",
-              "common2.ee.gg": "6",
-              "common2.ee.hh": "7",
-              "cc": "1"
-           }
     # 将dicnew转换为对象
-    dic_trun = {}
-    conver_dic_2_dics(dic_list, dic_trun)
+    json_object = get_json(dic_list)
 
     # 将数据写入文件
-    json_data = json.dumps(dic_trun)
+    json.dump(json_object,json_file_name)
     with open(json_file_name,'wb') as f:
-        f.write(json_data)
+        f.write(str(json_object))
 
 
 def conver_dic_2_dics(dic_list, dic_trun):
@@ -116,6 +107,37 @@ def _convert_value(value):
         return None
     else:
         return value
+
+def get_json(i18nData):
+    key_list = []
+    value_list = []
+    for i in i18nData:
+        temp = i.split(".")
+        key_list.append(temp)
+        value_list.append(i18nData.get(i))
+    json_data = {}
+    for keys in key_list:
+        generate_json(keys, value_list, json_data, 0)
+    return json_data
+
+def generate_json(keys, values, dict_data, index):
+    # 判断是否已经在字典中有该字段
+    if str(keys[index]) in dict_data:
+        # 存在就在已存在的字典内的字典操作
+        my_dict = dict_data.get(str(keys[index]))
+        generate_json(keys, values, my_dict, index + 1)
+    else:
+        # 判断是否为最后一个字段
+        if index + 1 == len(keys):
+            # 如果是后一个字段就取值
+            my_dict = {str(keys[index]): values[0]}
+            values.pop(0)
+        else:
+            # 因为不是最后一个字段所以赋值一个空字典，防止出现None错误
+            my_dict = {str(keys[index]): {}}
+            generate_json(keys, values, my_dict, index)
+        # temp = dict_data.get(str(keys[i]))
+        dict_data.update(my_dict)
 
 
 if __name__ == '__main__':

@@ -29,7 +29,7 @@ def _update_file_data_from_excel(json_file_name, obj):
     for key in excel_dic:
         dic_new[key]=excel_dic[key]
 
-    # 5. 将dicnew转换为JSON, 写入文件 todo
+    # 5. 将dicnew转换为JSON, 写入文件
     excel_helper._convert_dict_2_json(json_file_name, dic_new)
 
 
@@ -84,3 +84,8 @@ def get_map_from_excel(obj):
 
     mt=DataFrame(ln_movement,index=range(1,631),columns=["movement"])
     mt.describe()
+
+
+
+
+
